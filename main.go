@@ -3,11 +3,11 @@ package main
 import (
 	"context"
 	"log"
+	"os"
 
 	firebase "firebase.google.com/go/v4"
 	"github.com/david8zhang/go-firebase/routes"
 	"github.com/gin-gonic/gin"
-	"google.golang.org/api/option"
 )
 
 func main() {
@@ -17,8 +17,7 @@ func main() {
 		DatabaseURL: "https://habit-rank-default-rtdb.firebaseio.com",
 	}
 
-	opt := option.WithCredentialsFile("env/habit-rank-firebase-adminsdk-8xo36-576cec4f1c.json")
-	app, err := firebase.NewApp(ctx, conf, opt)
+	app, err := firebase.NewApp(ctx, conf)
 	if err != nil {
 		log.Fatalln("error in initializing firebase app: ", err)
 	}
@@ -32,5 +31,10 @@ func main() {
 	routes.GetTodos(r, client)
 	routes.DeleteTodo(r, client)
 
-	r.Run()
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+		log.Printf("defaulting to port %s", port)
+}
+	r.Run(":" + port)
 }
