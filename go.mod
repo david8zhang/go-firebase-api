@@ -1,4 +1,4 @@
-module github.com/david8zhang/go-firebase
+module habit-rank-api
 
 go 1.19
 

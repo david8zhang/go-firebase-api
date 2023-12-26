@@ -12,13 +12,13 @@ import (
 )
 
 type Todo struct {
-	Id string
-	Title string
-	Difficulty string
-	LastUpdated int64
+	Id string `json:"id"`
+	Title string `json:"title"`
+	Difficulty string `json:"difficulty"`
+	LastUpdated int64 `json:"lastUpdated"`
 }
 
-func SetupRoutes(r *gin.Engine, client *db.Client) {
+func SetupTodoRoutes(r *gin.Engine, client *db.Client) {
 	getTodos(r, client)
 	completeTodos(r, client)
 	updateTodo(r, client)

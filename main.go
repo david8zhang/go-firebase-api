@@ -6,8 +6,9 @@ import (
 	"log"
 	"os"
 
+	"habit-rank-api/routes"
+
 	firebase "firebase.google.com/go/v4"
-	"github.com/david8zhang/go-firebase/routes"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/api/option"
 )
@@ -57,7 +58,8 @@ func main() {
 	}
 
 	r.Use(CORSMiddleware())
-	routes.SetupRoutes(r, client)
+	routes.SetupTodoRoutes(r, client)
+	routes.SetupProgressionRoutes(r, client)
 
 	port := os.Getenv("PORT")
 	if port == "" {
