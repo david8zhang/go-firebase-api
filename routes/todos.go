@@ -21,27 +21,11 @@ type Todo struct {
 }
 
 func SetupTodoRoutes(r *gin.Engine, client *db.Client) {
-	getTodos(r, client)
 	completeTodos(r, client)
 	updateTodo(r, client)
 	createTodo(r, client)
 	deleteTodo(r, client)
 	processExpiredTodos(r, client)
-}
-
-func getTodos(r *gin.Engine, client *db.Client) {
-	r.GET("todo", func (c *gin.Context) {
-
-		ref := client.NewRef("todos")
-		var todos map[string]Todo
-		if err := ref.Get(context.TODO(), &todos); err != nil {
-			log.Fatalln("error in reading from firebase DB: ", err)
-		}
-
-		c.JSON(http.StatusOK, gin.H{
-			"todos": maps.Values(todos),
-		})
-	})
 }
 
 func completeTodos(r *gin.Engine, client *db.Client) {
@@ -191,7 +175,7 @@ func processExpiredTodos(r *gin.Engine, client *db.Client) {
 				}
 			}
 		}
-		progPayload := map[string]interface{}{"newRank":currRank,"expTotal":currExpTotal}
+		progPayload := map[string]interface{}{"rank":currRank,"expTotal":currExpTotal}
 		if updateErr := progRef.Update(context.TODO(), progPayload); updateErr != nil {
 			log.Fatal(updateErr)
 		}
@@ -203,7 +187,11 @@ func processExpiredTodos(r *gin.Engine, client *db.Client) {
 		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"beginningOfDay": bod,
+			"progression": map[string]interface{}{
+				"old": prog,
+				"new": progPayload,
+			},
+			"todos": todoArr,
 		})
 	})
 }
